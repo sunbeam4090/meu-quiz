@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio do Dia dos Enfermeiros: Missão de Emergência</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            transition: transform 0.3s ease;
+        }
+        .quiz-container:hover {
+            transform: scale(1.02);
+        }
+        h1 {
+            color: #d32f2f;
+            font-size: 24px;
+        }
+        p {
+            color: #333;
+        }
+        .progress-container {
+            margin: 10px 0;
+            text-align: left;
+        }
+        .progress-text {
+            font-size: 14px;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #1976d2;
+            transition: width 0.5s ease;
+        }
+        .difficulty {
+            font-size: 14px;
+            color: #d32f2f;
+            margin: 10px 0;
+        }
+        .question-container {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        .question-container.fade-out {
+            opacity: 0;
+        }
+        .question-container.fade-in {
+            opacity: 1;
+        }
+        .option {
+            background-color: #e3f2fd;
+            padding: 12px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+        }
+        .option:hover {
+            background-color: #bbdefb;
+        }
+        .feedback {
+            margin: 10px 0;
+            font-weight: bold;
+            transition: opacity 0.5s ease;
+        }
+        .correct { color: green; }
+        .incorrect { color: red; }
+        .next-btn {
+            background-color: #1976d2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s ease;
+        }
+        .next-btn:hover {
+            background-color: #1565c0;
+        }
+        .next-quiz {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #d32f2f;
+        }
+        .ranking {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1976d2;
+            margin-top: 10px;
+        }
+        .nurse-message {
+            font-size: 16px;
+            color: #333;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        .global-progress {
+            font-size: 14px;
+            color: #1976d2;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Desafio do Dia dos Enfermeiros: Missão de Emergência 🩺</h1>
+        <div class="global-progress" id="globalProgress"></div>
+        <p>Você está sendo convocado para uma situação real. Teste seus reflexos e conhecimentos em primeiros socorros!</p>
+        <div class="progress-container">
+            <div class="progress-text" id="progressText"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        <div class="difficulty" id="difficulty"></div>
+        <div class="question-container" id="questionContainer">
+            <div id="question"></div>
+            <div id="options"></div>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <button id="nextBtn" class="next-btn" style="display: none;">Próxima Pergunta</button>
+        <div id="score" style="display: none;"></div>
+        <div id="ranking" class="ranking" style="display: none;"></div>
+        <div id="nextQuiz" class="next-quiz" style="display: none;"></div>
+    </div>
+
+    <script>
+        const quizData = {
+            nurseMessage: "Você é o herói que não usa capa, mas salva vidas.",
+            quizId: 25
+        };
+
+        const questions = [
+            {
+                question: "Qual é a primeira ação ao presenciar uma parada cardíaca?",
+                options: ["Dar água", "Chamar emergência e iniciar RCP", "Sacudir", "Ignorar"],
+                correct: 1,
+                explanation: "Chamar emergência e iniciar RCP maximiza as chances de sobrevivência.",
+                difficulty: "Fácil",
+                points: 1
+            },
+            {
+                question: "O que fazer ao identificar insolação em uma pessoa?",
+                options: ["Expor ao sol", "Levar a sombra e resfriar", "Dar banho quente", "Ignorar"],
+                correct: 1,
+                explanation: "Levar a sombra e resfriar ajuda a baixar a temperatura corporal.",
+                difficulty: "Médio",
+                points: 2
+            },
+            {
+                question: "Qual é o sinal mais comum de parada cardíaca?",
+                options: ["Febre", "Ausência de pulso e respiração", "Tosse", "Dor de cabeça"],
+                correct: 1,
+                explanation: "Ausência de pulso e respiração indica parada cardíaca.",
+                difficulty: "Médio",
+                points: 2
+            },
+            {
+                question: "Como agir se a vítima de insolação apresentar convulsões?",
+                options: ["Cobrir com cobertores", "Proteger a cabeça e chamar emergência", "Dar água", "Ignorar"],
+                correct: 1,
+                explanation: "Proteger a cabeça e chamar emergência é essencial em casos graves.",
+                difficulty: "Difícil",
+                points: 3
+            },
+            {
+                question: "O que fazer se a vítima de parada cardíaca não responde após 2 minutos de RCP?",
+                options: ["Parar", "Continuar RCP e esperar o desfibrilador", "Dar água", "Deixar descansar"],
+                correct: 1,
+                explanation: "Continuar RCP até o desfibrilador ou socorro chegar é crucial.",
+                difficulty: "Difícil",
+                points: 3
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const feedbackEl = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreEl = document.getElementById('score');
+        const progressTextEl = document.getElementById('progressText');
+        const progressFillEl = document.getElementById('progressFill');
+        const difficultyEl = document.getElementById('difficulty');
+        const rankingEl = document.getElementById('ranking');
+        const nextQuizEl = document.getElementById('nextQuiz');
+        const questionContainer = document.getElementById('questionContainer');
+        const globalProgressEl = document.getElementById('globalProgress');
+
+        function getGlobalProgress() {
+            const totalPoints = parseInt(localStorage.getItem('totalPoints') || '0');
+            const completedQuizzes = parseInt(localStorage.getItem('completedQuizzes') || '0');
+            const quizIds = JSON.parse(localStorage.getItem('quizIds') || '[]');
+            return { totalPoints, completedQuizzes, quizIds };
+        }
+
+        function saveGlobalProgress(points, quizId) {
+            let { totalPoints, completedQuizzes, quizIds } = getGlobalProgress();
+            if (!quizIds.includes(quizId)) {
+                totalPoints += points;
+                completedQuizzes += 1;
+                quizIds.push(quizId);
+                localStorage.setItem('totalPoints', totalPoints);
+                localStorage.setItem('completedQuizzes', completedQuizzes);
+                localStorage.setItem('quizIds', JSON.stringify(quizIds));
+            }
+        }
+
+        function displayGlobalProgress() {
+            const { totalPoints, completedQuizzes } = getGlobalProgress();
+            globalProgressEl.textContent = `Progresso global: ${totalPoints} pontos, ${completedQuizzes} níveis completados`;
+        }
+
+        function loadQuestion() {
+            displayGlobalProgress();
+            if (currentQuestion >= questions.length) {
+                showScore();
+                return;
+            }
+            questionContainer.classList.add('fade-out');
+            setTimeout(() => {
+                const q = questions[currentQuestion];
+                questionEl.textContent = q.question;
+                progressTextEl.textContent = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+                progressFillEl.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+                difficultyEl.textContent = `Nível: ${q.difficulty}`;
+                optionsEl.innerHTML = '';
+                q.options.forEach((option, index) => {
+                    const btn = document.createElement('div');
+                    btn.classList.add('option');
+                    btn.textContent = option;
+                    btn.addEventListener('click', () => checkAnswer(index));
+                    optionsEl.appendChild(btn);
+                });
+                feedbackEl.textContent = '';
+                nextBtn.style.display = 'none';
+                nextQuizEl.style.display = 'none';
+                rankingEl.style.display = 'none';
+                questionContainer.classList.remove('fade-out');
+                questionContainer.classList.add('fade-in');
+                setTimeout(() => {
+                    questionContainer.classList.remove('fade-in');
+                }, 500);
+            }, 500);
+        }
+
+        function checkAnswer(index) {
+            const q = questions[currentQuestion];
+            if (index === q.correct) {
+                score += q.points;
+                feedbackEl.textContent = `Correto! ${q.explanation} Você é um verdadeiro enfermeiro em ação!`;
+                feedbackEl.classList.add('correct');
+            } else {
+                feedbackEl.textContent = `Incorreto. ${q.explanation} Continue treinando, herói!`;
+                feedbackEl.classList.add('incorrect');
+            }
+            const options = optionsEl.getElementsByClassName('option');
+            for (let option of options) {
+                option.style.pointerEvents = 'none';
+            }
+            currentQuestion++;
+            nextBtn.style.display = 'block';
+        }
+
+        function showScore() {
+            saveGlobalProgress(score, quizData.quizId);
+            questionContainer.classList.add('fade-out');
+            setTimeout(() => {
+                questionEl.textContent = 'Missão Concluída!';
+                optionsEl.innerHTML = '';
+                feedbackEl.innerHTML = `<div class="nurse-message">${quizData.nurseMessage}</div>`;
+                progressTextEl.textContent = '';
+                progressFillEl.style.width = '100%';
+                difficultyEl.textContent = '';
+                scoreEl.textContent = `Pontuação neste quiz: ${score} de 11 pontos`;
+                scoreEl.style.display = 'block';
+                let rank = '';
+                if (score <= 4) {
+                    rank = 'Aprendiz de Enfermagem 🩺';
+                } else if (score <= 8) {
+                    rank = 'Socorrista em Treinamento 🚑';
+                } else {
+                    rank = 'Herói da Saúde 🏆';
+                }
+                rankingEl.textContent = `Seu ranking: ${rank}`;
+                rankingEl.style.display = 'block';
+                if (score >= 9) {
+                    nextQuizEl.innerHTML = 'Parabéns! Anote seu nome para concorrer a brindes! <a href="https://github.com/seu-usuario/quizzes-primeiros-socorros">Saiba mais</a>';
+                } else {
+                    nextQuizEl.innerHTML = 'Treine mais! Tente outro quiz: <a href="quiz26.html">Quiz 26</a>';
+                }
+                nextQuizEl.style.display = 'block';
+                nextBtn.style.display = 'none';
+                questionContainer.classList.remove('fade-out');
+                questionContainer.classList.add('fade-in');
+                setTimeout(() => {
+                    questionContainer.classList.remove('fade-in');
+                }, 500);
+            }, 500);
+        }
+
+        nextBtn.addEventListener('click', () => {
+            loadQuestion();
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>
