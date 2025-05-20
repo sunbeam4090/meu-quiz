@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio do Dia dos Enfermeiros: Frase Inspiradora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            transition: transform 0.3s ease;
+        }
+        .quiz-container:hover {
+            transform: scale(1.02);
+        }
+        h1 {
+            color: #d32f2f;
+            font-size: 24px;
+        }
+        p {
+            color: #333;
+        }
+        .progress-container {
+            margin: 10px 0;
+            text-align: left;
+        }
+        .progress-text {
+            font-size: 14px;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #1976d2;
+            transition: width 0.5s ease;
+        }
+        .difficulty {
+            font-size: 14px;
+            color: #d32f2f;
+            margin: 10px 0;
+        }
+        .question-container {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        .question-container.fade-out {
+            opacity: 0;
+        }
+        .question-container.fade-in {
+            opacity: 1;
+        }
+        .phrase {
+            background-color: #e3f2fd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 18px;
+            color: #333;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+        .phrase:hover {
+            background-color: #bbdefb;
+        }
+        .feedback {
+            margin: 10px 0;
+            font-weight: bold;
+            transition: opacity 0.5s ease;
+        }
+        .next-btn {
+            background-color: #1976d2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s ease;
+            display: none;
+        }
+        .next-btn:hover {
+            background-color: #1565c0;
+        }
+        .next-quiz {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #d32f2f;
+        }
+        .ranking {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1976d2;
+            margin-top: 10px;
+        }
+        .nurse-message {
+            font-size: 16px;
+            color: #333;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        .global-progress {
+            font-size: 14px;
+            color: #1976d2;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Desafio do Dia dos Enfermeiros: Frase Inspiradora 🩺</h1>
+        <div class="global-progress" id="globalProgress"></div>
+        <p>Ninguém te contou, mas nós falamos</p>
+        <div class="progress-container">
+            <div class="progress-text" id="progressText"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        <div class="difficulty" id="difficulty"></div>
+        <div class="question-container" id="questionContainer">
+            <div class="phrase" id="phrase">O cuidado que você oferece é um presente para a humanidade.</div>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div id="score" style="display: none;"></div>
+        <div id="ranking" class="ranking" style="display: none;"></div>
+        <div id="nextQuiz" class="next-quiz" style="display: none;"></div>
+    </div>
+
+    <script>
+        const frasesData = {
+            nurseMessage: "Cada frase revela o esforço invisível dos enfermeiros.",
+            fraseId: 9
+        };
+
+        const phraseEl = document.getElementById('phrase');
+        const feedbackEl = document.getElementById('feedback');
+        const progressTextEl = document.getElementById('progressText');
+        const progressFillEl = document.getElementById('progressFill');
+        const difficultyEl = document.getElementById('difficulty');
+        const rankingEl = document.getElementById('ranking');
+        const nextQuizEl = document.getElementById('nextQuiz');
+        const questionContainer = document.getElementById('questionContainer');
+        const globalProgressEl = document.getElementById('globalProgress');
+
+        // Configuração estática da frase
+        phraseEl.textContent = "O cuidado que você oferece é um presente para a humanidade.";
+        progressTextEl.textContent = "";
+        progressFillEl.style.width = "0%";
+        difficultyEl.textContent = "";
+        feedbackEl.textContent = "";
+        nextQuizEl.style.display = "none";
+        rankingEl.style.display = "none";
+    </script>
+</body>
+</html>
